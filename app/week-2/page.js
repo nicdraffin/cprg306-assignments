@@ -1,5 +1,10 @@
-export default function ShoppingList() {
+import StudentInfo from "./student-info";
+
+export default function Page() {
     return (
-        <h1>Start here</h1>
+        <main>
+            <h1>Shopping List</h1>
+            <StudentInfo />
+        </main> 
     );
 }
