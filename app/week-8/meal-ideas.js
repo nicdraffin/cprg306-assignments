@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 export default function MealIdeas({ ingredient }) {
+
   const [meals, setMeals] = useState([]);
 
   async function fetchMealIdeas(ingredient) {
@@ -10,22 +11,30 @@ export default function MealIdeas({ ingredient }) {
       const response = await fetch(
         `https://www.themealdb.com/api/json/v1/1/filter.php?i=${ingredient}`
       );
-      if (!response.ok) throw new Error(response.statusText);
+      if (!response.ok) console.log(response.statusText);
       const data = await response.json();
-
-      let shuffled = [...data.meals];
-      shuffled = shuffled.sort(() => 0.5 - Math.random()).slice(0, 10);
-      setMeals(shuffled);
+      return data;
     } catch (error) {
       console.log(`Error: ${error.message}`);
     }
   }
 
   useEffect(() => {
-    if (ingredient) {
-      fetchMealIdeas(ingredient);
-    }
-  }, [ingredient]);
+    (async () => {
+      if ( meals != null && meals.length > 0 ) {
+        let mealList = [];
+        for (let i = 0; i < meals.length; i++) {
+          let thisMeal = await fetchMealIdeas(meals[i])
+          mealList.push(thisMeal)
+        }
+        console.dir(mealList);
+        setMeals(mealList);
+        
+      }
+    })();
+  
+  }, [meals]);
+
 
   return (
     <div className="meal-ideas">
@@ -34,11 +43,6 @@ export default function MealIdeas({ ingredient }) {
         {meals && meals.length > 0 ? (
           meals.map((meal) => (
             <li key={meal.idMeal} className="flex items-center space-x-3">
-              <img
-                src={meal.strMealThumb}
-                alt={meal.strMeal}
-                className="w-16 h-16 rounded-md"
-              />
               <p className="meal-name text-md">{meal.strMeal}</p>
             </li>
           ))

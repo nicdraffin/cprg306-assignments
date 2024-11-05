@@ -23,7 +23,7 @@ export default function Page() {
       <h1 className="text-3xl font-bold my-4">Shopping List App</h1>
       <NewItem onAddItem={handleAddItem} />
       <ItemList items={items} onItemSelect={handleItemSelect} />
-      {selectedItem && <MealIdeas ingredient={selectedItem} />}
+      {selectedItem && <MealIdeas ingredient={selectedItem.replace(/,$/, '').split(' ')[0].trim()} />}
     </div>
   );
 }
