@@ -11,40 +11,43 @@ export default function MealIdeas({ ingredient }) {
       const response = await fetch(
         `https://www.themealdb.com/api/json/v1/1/filter.php?i=${ingredient}`
       );
-      if (!response.ok) console.log(response.statusText);
+      if (!response.ok) {
+        console.log(response.statusText);
+        return [];
+      }
       const data = await response.json();
-      return data;
+      return data.meals;
     } catch (error) {
       console.log(`Error: ${error.message}`);
+      return [];
+    }
+  }
+  async function loadMealIdeas() {
+    if (ingredient) {
+      const mealData = await fetchMealIdeas(ingredient);
+      setMeals(mealData);
+    } else {
+      setMeals([]);
     }
   }
 
   useEffect(() => {
-    (async () => {
-      if ( meals != null && meals.length > 0 ) {
-        let mealList = [];
-        for (let i = 0; i < meals.length; i++) {
-          let thisMeal = await fetchMealIdeas(meals[i])
-          mealList.push(thisMeal)
-        }
-        console.dir(mealList);
-        setMeals(mealList);
-        
-      }
-    })();
-  
-  }, [meals]);
+    loadMealIdeas();
+  }, [ingredient]);
 
 
   return (
     <div className="meal-ideas">
       <h3 className="text-lg font-bold mb-2">Meal Ideas for: {ingredient}</h3>
       <ul className="meal-list space-y-2">
-        {meals && meals.length > 0 ? (
+        {meals.length > 0 ? (
           meals.map((meal) => (
-            <li key={meal.idMeal} className="flex items-center space-x-3">
-              <p className="meal-name text-md">{meal.strMeal}</p>
-            </li>
+            console.log(meal),
+            (
+              <li key={meal.idMeal} className="flex items-center space-x-3">
+                <p className="meal-name text-md">{meal.strMeal}</p>
+              </li>
+            )
           ))
         ) : (
           <p>No meals found for this ingredient.</p>

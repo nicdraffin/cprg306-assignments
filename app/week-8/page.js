@@ -15,6 +15,14 @@ export default function Page() {
   };
 
   const handleItemSelect = (itemName) => {
+    const cleanedName = itemName
+      .replace(
+        /[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|\u2011-\u26FF|\uD83E[\uDD10-\uDDFF]/g,
+        ""
+      )
+      .split(",")[0]
+      .trim();
+
     setSelectedItem(itemName);
   };
 
@@ -23,7 +31,10 @@ export default function Page() {
       <h1 className="text-3xl font-bold my-4">Shopping List App</h1>
       <NewItem onAddItem={handleAddItem} />
       <ItemList items={items} onItemSelect={handleItemSelect} />
-      {selectedItem && <MealIdeas ingredient={selectedItem.replace(/,$/, '').split(' ')[0].trim()} />}
+      {selectedItem ? (<MealIdeas ingredient={selectedItem} />
+        ) : (
+          <h2>Please Select an Ingredient to See Meal Ideas</h2>
+        )}
     </div>
   );
 }
